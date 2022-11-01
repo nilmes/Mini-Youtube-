@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+      
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+
+    }
+
+    body{
+        font-family:"Roboto","sans-serif";
+    }
+
+    .material-icons{
+        color: gray;
+    }
+
+    .header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 70px;
+        padding: 20px;
+    }
+    .header_left{
+        display: flex;
+        align-items: center;
+    }
+    .header li {
+      padding: 0px 7px;
+      cursor: pointer;
+    }
+    .header_search form{
+        border: 1px solid #ddd ;
+        height: 35px ;
+        margin: 0;
+        padding: 0;
+        display: flex;
+
+    }
+    .header_search input{
+        width: 500px;
+        padding: 10px;
+        margin: 0;
+        border: none;
+        border-radius: 5px;
+    }
+    .header_left img{
+        width: 100px;
+        height: 60px;
+    }
+    /* navbar :end */
+    .videos{
+        width: 90%;
+      
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 15px;
+    }
+    .video{
+       
+        margin: auto;
+        height: 300px;
+    }
+</style>
+<body>
+    <!-- header starts -->
+    <div class="header">
+        <div class="header_left">
+            <li class="material-icons">menu</li>
+            <img src="https://tse1.mm.bing.net/th?id=OIP.4JSI74QS_rWQ55Le7M_hKwHaGL&pid=Api&P=0&w=216&h=180" alt="youtube">
+        </div>
+        <div class="header_search">
+              <form action="">
+                <input type="text" id="query" placeholder="Search">
+                <button onclick="search()"><li class="material-icons">search</li></button>
+              </form>
+        </div>
+        <div class="header_icons">
+          <li class="material-icons">videocam</li>
+          <li class="material-icons">apps</li>
+          <li class="material-icons">notifications</li>
+          <li class="material-icons">account_circle</li>
+        </div>
+    </div>
+    <!-- header ends -->
+    <button onclick="filter(data)">Sort</button>
+    <div class="videos">
+       
+    </div>
+   
+</body>
+</html>
+<script>
+//    let api=AIzaSyB9uxi4ZdArRR6Ul1y-ONDPd3w_ILM-854
+   let url="https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=kgf&key=AIzaSyB9uxi4ZdArRR6Ul1y-ONDPd3w_ILM-854"
+    let data=[]
+    let search = async () => {
+        event.preventDefault()
+       let query=document.querySelector("#query").value
+       data= await getdata(query)
+       append(data)
+    //    console.log(data)
+    }
+
+    let getdata= async (query) =>{
+        let url=`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=${query}&key=AIzaSyB9uxi4ZdArRR6Ul1y-ONDPd3w_ILM-854`
+
+         let resp=await fetch(url)
+         let data =await resp.json()
+         return data.items
+        
+    }
+
+    let append = (data) => {
+        let container=document.querySelector(".videos") 
+        container.innerHTML=null
+        data.forEach((el)=> {
+            // snippet--> title
+            // snipped-->thumbnails-->medium-->url
+            let img=document.createElement("img")
+            img.src=el.snippet.thumbnails.medium.url
+            
+            let h3=document.createElement("h3")
+            h3.innerText=el.snippet.title
+
+            let div=document.createElement("div")
+            div.onclick=() =>{
+                savevideo(el)
+            }
+            div.append(img,h3)
+            div.setAttribute("class","video")
+            
+
+            container.append(div)
+        })
+    }
+
+    let savevideo=(el) => {
+        localStorage.setItem("video",JSON.stringify(el))
+        window.location.href="playvideo.html"
+    }
+    
+
+    let filter =(data) =>{
+      console.log(data)
+     let ans =data.filter((el)=>{
+        return el.snippet.channelId==="UCvC4D8onUfXzvjTOM-dBfEA"
+     })
+     append(ans);
+    }
+
+     
+</script>
